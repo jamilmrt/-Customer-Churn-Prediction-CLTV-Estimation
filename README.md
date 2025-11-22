@@ -15,7 +15,7 @@ How to run locally (quick):
 4. Train models:
    python src/train.py --input intermediate --models models
 
-5. Score customers:
+5. Score customers: 
    python src/score.py --intermediate intermediate --models models --output outputs
 
 6. Run API (optional):
