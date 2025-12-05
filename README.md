@@ -1,4 +1,4 @@
-# Final Year Project — Customer Scoring
+# Final Year Project — Customer Churn Prediction and CLTV Estimation with explanable AI
 
 This repository implements a simple pipeline to prepare data, train models, and score customers.
 
