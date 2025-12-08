@@ -46,16 +46,16 @@ def run(inputs_dir, output_dir, reference_date="2024-01-01"):
     # Fill missing
     features["total_amount"] = features["total_amount"].fillna(0)
     features["trans_count"] = features["trans_count"].fillna(0).astype(int)
-    features["logins_7d"] = features.get("logins_7d", 0).fillna(0).astype(int)
-    features["logins_30d"] = features.get("logins_30d", 0).fillna(0).astype(int)
-    features["logins_90d"] = features.get("logins_90d", 0).fillna(0).astype(int)
-    features["tickets"] = features.get("tickets", 0).fillna(0).astype(int)
-    features["avg_resolution"] = features.get("avg_resolution", 0).fillna(0)
+    features["logins_7d"] = features["logins_7d"].fillna(0).astype(int)
+    features["logins_30d"] = features["logins_30d"].fillna(0).astype(int)
+    features["logins_90d"] = features["logins_90d"].fillna(0).astype(int)
+    features["tickets"] = features["tickets"].fillna(0).astype(int)
+    features["avg_resolution"] = features["avg_resolution"].fillna(0)
     features["signup_date"] = pd.to_datetime(features["signup_date"])
     features["tenure_days"] = (ref - features["signup_date"]).dt.days
 
     # select columns to save
-    out = features[["customer_id","plan","monthly_fee","total_amount","trans_count","recency_days","recency_days_tx",
+    out = features[["customer_id","plan","monthly_fee","total_amount","trans_count","recency_days_tx",
                     "logins_7d","logins_30d","logins_90d","tickets","avg_resolution","tenure_days","churn"]].copy()
 
     out.to_csv(outputs/"engineered_features.csv", index=False)
