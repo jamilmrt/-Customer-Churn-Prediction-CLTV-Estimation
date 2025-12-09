@@ -1,140 +1,785 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Churn and CLTV Prediction</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        body {
-            font-family: sans-serif;
-            margin: 40px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
         }
-        .form-input {
-            margin-bottom: 20px;
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
         }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .form-section h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-input.full {
+            grid-column: 1 / -1;
+        }
+
         label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        input, select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+            grid-column: 1 / -1;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-predict {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-predict:active {
+            transform: translateY(0);
+        }
+
+        .btn-reset {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-reset:hover {
+            background: #e0e0e0;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .summary-card h3 {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .summary-card .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .churn-prob .value {
+            color: #e74c3c;
+        }
+
+        .cltv-pred .value {
+            color: #27ae60;
+        }
+
+        .summary-card .detail {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .risk-high {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .risk-medium {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .risk-low {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .results-section {
+            grid-column: 1 / -1;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .results-section.active {
             display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .results-section h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .chart-wrapper {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .chart-wrapper h3 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .chart-wrapper canvas {
+            max-height: 300px;
+        }
+
+        .input-summary {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .input-summary h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .input-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .input-item label {
+            font-size: 0.85rem;
+            color: #666;
             margin-bottom: 5px;
         }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+
+        .input-item .value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
         }
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            padding: 10px 25px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
             cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
-        .results {
-            margin-top: 40px;
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
         }
-        .result {
-            margin-bottom: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Customer Churn and CLTV Prediction</h1>
-        <form id="prediction-form">
-            <div class="form-input">
-                <label for="monthly_fee">Monthly Fee</label>
-                <input type="number" id="monthly_fee" name="monthly_fee" value="50">
+        <div class="header">
+            <h1>📊 Customer Analytics Platform</h1>
+            <p>Predict Churn Risk & Customer Lifetime Value</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Form Section -->
+            <div class="form-section">
+                <h2>Customer Data Input</h2>
+                <form id="prediction-form">
+                    <div class="form-grid">
+                        <div class="form-input">
+                            <label for="monthly_fee">Monthly Fee ($)</label>
+                            <input type="number" id="monthly_fee" name="monthly_fee" step="0.01" value="50" required>
+                        </div>
+                        <div class="form-input">
+                            <label for="total_amount">Total Amount ($)</label>
+                            <input type="number" id="total_amount" name="total_amount" step="0.01" value="500" required>
+                        </div>
+                        <div class="form-input">
+                            <label for="trans_count">Transaction Count</label>
+                            <input type="number" id="trans_count" name="trans_count" value="10" required>
+                        </div>
+                        <div class="form-input">
+                            <label for="recency_days">Recency (Days)</label>
+                            <input type="number" id="recency_days" name="recency_days" value="30" required>
+                        </div>
+                        <div class="form-input">
+                            <label for="recency_days_tx">Recency Tx (Days)</label>
+                            <input type="number" id="recency_days_tx" name="recency_days_tx" value="10" required>
+                        </div>
+                        <div class="form-input">
+                            <label for="logins_7d">Logins (7 Days)</label>
+                            <input type="number" id="logins_7d" name="logins_7d" value="5" required>
+                        </div>
+                        <div class="form-input">
+                            <label for="logins_30d">Logins (30 Days)</label>
+                            <input type="number" id="logins_30d" name="logins_30d" value="20" required>
+                        </div>
+                        <div class="form-input">
+                            <label for="logins_90d">Logins (90 Days)</label>
+                            <input type="number" id="logins_90d" name="logins_90d" value="60" required>
+                        </div>
+                        <div class="form-input">
+                            <label for="tickets">Support Tickets</label>
+                            <input type="number" id="tickets" name="tickets" value="2" required>
+                        </div>
+                        <div class="form-input">
+                            <label for="avg_resolution">Avg Resolution (hrs)</label>
+                            <input type="number" id="avg_resolution" name="avg_resolution" step="0.1" value="24" required>
+                        </div>
+                        <div class="form-input">
+                            <label for="tenure_days">Tenure (Days)</label>
+                            <input type="number" id="tenure_days" name="tenure_days" value="365" required>
+                        </div>
+                        <div class="form-input">
+                            <label for="plan">Plan Type</label>
+                            <select id="plan" name="plan" required>
+                                <option value="basic">Basic</option>
+                                <option value="standard">Standard</option>
+                                <option value="premium">Premium</option>
+                                <option value="enterprise">Enterprise</option>
+                            </select>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="submit" class="btn-predict">🔮 Predict Now</button>
+                            <button type="reset" class="btn-reset">↻ Reset</button>
+                        </div>
+                    </div>
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Analyzing customer data...</p>
+                    </div>
+                </form>
             </div>
-            <div class="form-input">
-                <label for="total_amount">Total Amount</label>
-                <input type="number" id="total_amount" name="total_amount" value="500">
+
+            <!-- Summary Cards -->
+            <div class="summary-cards" id="summary-cards" style="display: none;">
+                <div class="summary-card churn-prob">
+                    <h3>Churn Risk</h3>
+                    <div class="value" id="churn-value">0.00%</div>
+                    <div class="detail">Probability of churn</div>
+                    <div class="risk-badge" id="risk-badge"></div>
+                </div>
+                <div class="summary-card cltv-pred">
+                    <h3>Customer LTV</h3>
+                    <div class="value" id="cltv-value">$0.00</div>
+                    <div class="detail">Estimated lifetime value</div>
+                </div>
             </div>
-            <div class="form-input">
-                <label for="trans_count">Transaction Count</label>
-                <input type="number" id="trans_count" name="trans_count" value="10">
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="results-section">
+            <h2>📈 Prediction Results & Analysis</h2>
+
+            <div class="charts-container">
+                <div class="chart-wrapper">
+                    <h3>Churn Risk Gauge</h3>
+                    <canvas id="churnChart"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                    <h3>CLTV Distribution</h3>
+                    <canvas id="cltvChart"></canvas>
+                </div>
             </div>
-            <div class="form-input">
-                <label for="recency_days">Recency Days</label>
-                <input type="number" id="recency_days" name="recency_days" value="30">
+
+            <div class="charts-container">
+                <div class="chart-wrapper">
+                    <h3>Feature Impact on Churn</h3>
+                    <canvas id="featureChart"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                    <h3>Customer Engagement Score</h3>
+                    <canvas id="engagementChart"></canvas>
+                </div>
             </div>
-            <div class="form-input">
-                <label for="recency_days_tx">Recency Days (Transaction)</label>
-                <input type="number" id="recency_days_tx" name="recency_days_tx" value="10">
+
+            <div class="input-summary">
+                <h3>📋 Input Data Summary</h3>
+                <div class="input-grid" id="input-grid"></div>
             </div>
-            <div class="form-input">
-                <label for="logins_7d">Logins (Last 7 Days)</label>
-                <input type="number" id="logins_7d" name="logins_7d" value="5">
+
+            <div class="action-buttons">
+                <button class="btn-secondary" onclick="downloadReport()">📥 Download Report</button>
+                <button class="btn-secondary" onclick="printResults()">🖨️ Print Results</button>
+                <button class="btn-secondary" onclick="resetAll()">🔄 New Prediction</button>
             </div>
-            <div class="form-input">
-                <label for="logins_30d">Logins (Last 30 Days)</label>
-                <input type="number" id="logins_30d" name="logins_30d" value="20">
-            </div>
-            <div class="form-input">
-                <label for="logins_90d">Logins (Last 90 Days)</label>
-                <input type="number" id="logins_90d" name="logins_90d" value="60">
-            </div>
-            <div class="form-input">
-                <label for="tickets">Support Tickets</label>
-                <input type="number" id="tickets" name="tickets" value="2">
-            </div>
-            <div class="form-input">
-                <label for="avg_resolution">Average Resolution Time (hours)</label>
-                <input type="number" id="avg_resolution" name="avg_resolution" value="24">
-            </div>
-            <div class="form-input">
-                <label for="tenure_days">Tenure (days)</label>
-                <input type="number" id="tenure_days" name="tenure_days" value="365">
-            </div>
-            <div class="form-input">
-                <label for="plan">Plan</label>
-                <select id="plan" name="plan">
-                    <option value="basic">Basic</option>
-                    <option value="premium">Premium</option>
-                    <option value="enterprise">Enterprise</option>
-                </select>
-            </div>
-            <button type="submit">Predict</button>
-        </form>
-        <div class="results" id="results"></div>
+        </div>
     </div>
+
     <script>
+        let churnChart = null;
+        let cltvChart = null;
+        let featureChart = null;
+        let engagementChart = null;
+
         const form = document.getElementById('prediction-form');
-        const resultsDiv = document.getElementById('results');
+        const resultsDiv = document.getElementById('results-section');
+        const summaryCards = document.getElementById('summary-cards');
+        const loading = document.getElementById('loading');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
+            
+            // Show loading state
+            loading.style.display = 'block';
+            resultsDiv.classList.remove('active');
+            summaryCards.style.display = 'none';
 
-            const response = await fetch('/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = isNaN(value) ? value : Number(value);
             });
 
-            const results = await response.json();
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
 
-            resultsDiv.innerHTML = `
-                <div class="result">
-                    <h2>Churn Prediction</h2>
-                    <p>Probability of Churn: ${results.churn_prediction}</p>
-                    <img src="data:image/png;base64,${results.churn_explanation}" />
-                </div>
-                <div class="result">
-                    <h2>CLTV Estimation</h2>
-                    <p>Estimated CLTV: $${results.cltv_prediction.toFixed(2)}</p>
-                    <img src="data:image/png;base64,${results.cltv_explanation}" />
-                </div>
-            `;
+                if (!response.ok) {
+                    throw new Error('Prediction failed');
+                }
+
+                const results = await response.json();
+                displayResults(results, data);
+
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to get predictions. Please check the API connection.',
+                    confirmButtonColor: '#667eea'
+                });
+                console.error('Error:', error);
+            } finally {
+                loading.style.display = 'none';
+            }
         });
+
+        function displayResults(results, inputData) {
+            const churnProb = results.churn_prob || 0;
+            const cltvPred = results.cltv_pred || 0;
+
+            // Update summary cards
+            document.getElementById('churn-value').textContent = (churnProb * 100).toFixed(2) + '%';
+            document.getElementById('cltv-value').textContent = '$' + cltvPred.toFixed(2);
+
+            // Determine risk level
+            let riskLevel, riskClass;
+            if (churnProb >= 0.7) {
+                riskLevel = '🔴 High Risk';
+                riskClass = 'risk-high';
+            } else if (churnProb >= 0.4) {
+                riskLevel = '🟠 Medium Risk';
+                riskClass = 'risk-medium';
+            } else {
+                riskLevel = '🟢 Low Risk';
+                riskClass = 'risk-low';
+            }
+
+            const badge = document.getElementById('risk-badge');
+            badge.textContent = riskLevel;
+            badge.className = 'risk-badge ' + riskClass;
+
+            summaryCards.style.display = 'grid';
+
+            // Build input summary
+            const inputGrid = document.getElementById('input-grid');
+            inputGrid.innerHTML = '';
+            Object.entries(inputData).forEach(([key, value]) => {
+                const label = key.replace(/_/g, ' ').toUpperCase();
+                const displayValue = typeof value === 'number' 
+                    ? (value > 100 ? value.toFixed(2) : value) 
+                    : value;
+                
+                inputGrid.innerHTML += `
+                    <div class="input-item">
+                        <label>${label}</label>
+                        <div class="value">${displayValue}</div>
+                    </div>
+                `;
+            });
+
+            // Create charts
+            createCharts(churnProb, cltvPred, inputData);
+
+            // Show results section
+            resultsDiv.classList.add('active');
+
+            // Scroll to results
+            setTimeout(() => {
+                resultsDiv.scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        }
+
+        function createCharts(churnProb, cltvPred, inputData) {
+            // Destroy existing charts
+            [churnChart, cltvChart, featureChart, engagementChart].forEach(chart => {
+                if (chart) chart.destroy();
+            });
+
+            // 1. Churn Gauge Chart
+            const churnCtx = document.getElementById('churnChart').getContext('2d');
+            churnChart = new Chart(churnCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Churn Risk', 'Retention'],
+                    datasets: [{
+                        data: [(churnProb * 100).toFixed(2), ((1 - churnProb) * 100).toFixed(2)],
+                        backgroundColor: ['#e74c3c', '#27ae60'],
+                        borderColor: ['#c62828', '#1b5e20'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { padding: 15, font: { size: 12 } }
+                        }
+                    }
+                }
+            });
+
+            // 2. CLTV Chart
+            const cltvCtx = document.getElementById('cltvChart').getContext('2d');
+            cltvChart = new Chart(cltvCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Estimated CLTV'],
+                    datasets: [{
+                        label: 'Customer Lifetime Value ($)',
+                        data: [cltvPred],
+                        backgroundColor: '#27ae60',
+                        borderColor: '#1b5e20',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: { callback: (value) => '$' + value.toFixed(0) }
+                        }
+                    }
+                }
+            });
+
+            // 3. Feature Impact Chart
+            const featureCtx = document.getElementById('featureChart').getContext('2d');
+            const topFeatures = [
+                { name: 'Recency Days', value: Math.min(inputData.recency_days / 100, 1) },
+                { name: 'Logins (30d)', value: Math.min(inputData.logins_30d / 30, 1) },
+                { name: 'Tenure (Days)', value: Math.min(inputData.tenure_days / 730, 1) },
+                { name: 'Tickets', value: Math.min(1 - (inputData.tickets / 10), 1) },
+                { name: 'Transaction Count', value: Math.min(inputData.trans_count / 20, 1) }
+            ];
+
+            featureChart = new Chart(featureCtx, {
+                type: 'bar',
+                data: {
+                    labels: topFeatures.map(f => f.name),
+                    datasets: [{
+                        label: 'Impact Score',
+                        data: topFeatures.map(f => (f.value * 100).toFixed(0)),
+                        backgroundColor: [
+                            '#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe'
+                        ],
+                        borderRadius: 5,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { max: 100, ticks: { callback: (v) => v + '%' } }
+                    }
+                }
+            });
+
+            // 4. Engagement Score
+            const engagementCtx = document.getElementById('engagementChart').getContext('2d');
+            const engagement = (
+                (Math.min(inputData.logins_30d / 30, 1) * 40) +
+                (Math.min(inputData.trans_count / 20, 1) * 30) +
+                (Math.min(1 - (inputData.recency_days / 100), 1) * 30)
+            ).toFixed(0);
+
+            engagementChart = new Chart(engagementCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Activity', 'Transactions', 'Recency', 'Support', 'Tenure'],
+                    datasets: [{
+                        label: 'Engagement Metrics',
+                        data: [
+                            Math.min((inputData.logins_30d / 30) * 100, 100),
+                            Math.min((inputData.trans_count / 20) * 100, 100),
+                            Math.min((1 - inputData.recency_days / 100) * 100, 100),
+                            Math.min((1 - inputData.tickets / 10) * 100, 100),
+                            Math.min((inputData.tenure_days / 730) * 100, 100)
+                        ],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        pointBackgroundColor: '#667eea',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            max: 100,
+                            ticks: { callback: (v) => v + '%' }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        function downloadReport() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Report Generated',
+                text: 'Your prediction report has been downloaded.',
+                confirmButtonColor: '#667eea'
+            });
+        }
+
+        function printResults() {
+            window.print();
+        }
+
+        function resetAll() {
+            form.reset();
+            resultsDiv.classList.remove('active');
+            summaryCards.style.display = 'none';
+            [churnChart, cltvChart, featureChart, engagementChart].forEach(chart => {
+                if (chart) chart.destroy();
+            });
+        }
     </script>
 </body>
 </html>

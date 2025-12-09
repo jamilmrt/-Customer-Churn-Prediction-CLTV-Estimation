@@ -55,7 +55,7 @@ def run(inputs_dir, output_dir, reference_date="2024-01-01"):
     features["tenure_days"] = (ref - features["signup_date"]).dt.days
 
     # select columns to save
-    out = features[["customer_id","plan","monthly_fee","total_amount","trans_count","recency_days_tx",
+    out = features[["customer_id","plan","monthly_fee","total_amount","trans_count","recency_days","recency_days_tx",
                     "logins_7d","logins_30d","logins_90d","tickets","avg_resolution","tenure_days","churn"]].copy()
 
     out.to_csv(outputs/"engineered_features.csv", index=False)
