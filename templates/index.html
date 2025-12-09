@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Churn and CLTV Prediction</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 40px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .form-input {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .results {
+            margin-top: 40px;
+        }
+        .result {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Customer Churn and CLTV Prediction</h1>
+        <form id="prediction-form">
+            <div class="form-input">
+                <label for="monthly_fee">Monthly Fee</label>
+                <input type="number" id="monthly_fee" name="monthly_fee" value="50">
+            </div>
+            <div class="form-input">
+                <label for="total_amount">Total Amount</label>
+                <input type="number" id="total_amount" name="total_amount" value="500">
+            </div>
+            <div class="form-input">
+                <label for="trans_count">Transaction Count</label>
+                <input type="number" id="trans_count" name="trans_count" value="10">
+            </div>
+            <div class="form-input">
+                <label for="recency_days">Recency Days</label>
+                <input type="number" id="recency_days" name="recency_days" value="30">
+            </div>
+            <div class="form-input">
+                <label for="recency_days_tx">Recency Days (Transaction)</label>
+                <input type="number" id="recency_days_tx" name="recency_days_tx" value="10">
+            </div>
+            <div class="form-input">
+                <label for="logins_7d">Logins (Last 7 Days)</label>
+                <input type="number" id="logins_7d" name="logins_7d" value="5">
+            </div>
+            <div class="form-input">
+                <label for="logins_30d">Logins (Last 30 Days)</label>
+                <input type="number" id="logins_30d" name="logins_30d" value="20">
+            </div>
+            <div class="form-input">
+                <label for="logins_90d">Logins (Last 90 Days)</label>
+                <input type="number" id="logins_90d" name="logins_90d" value="60">
+            </div>
+            <div class="form-input">
+                <label for="tickets">Support Tickets</label>
+                <input type="number" id="tickets" name="tickets" value="2">
+            </div>
+            <div class="form-input">
+                <label for="avg_resolution">Average Resolution Time (hours)</label>
+                <input type="number" id="avg_resolution" name="avg_resolution" value="24">
+            </div>
+            <div class="form-input">
+                <label for="tenure_days">Tenure (days)</label>
+                <input type="number" id="tenure_days" name="tenure_days" value="365">
+            </div>
+            <div class="form-input">
+                <label for="plan">Plan</label>
+                <select id="plan" name="plan">
+                    <option value="basic">Basic</option>
+                    <option value="premium">Premium</option>
+                    <option value="enterprise">Enterprise</option>
+                </select>
+            </div>
+            <button type="submit">Predict</button>
+        </form>
+        <div class="results" id="results"></div>
+    </div>
+    <script>
+        const form = document.getElementById('prediction-form');
+        const resultsDiv = document.getElementById('results');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const results = await response.json();
+
+            resultsDiv.innerHTML = `
+                <div class="result">
+                    <h2>Churn Prediction</h2>
+                    <p>Probability of Churn: ${results.churn_prediction}</p>
+                    <img src="data:image/png;base64,${results.churn_explanation}" />
+                </div>
+                <div class="result">
+                    <h2>CLTV Estimation</h2>
+                    <p>Estimated CLTV: $${results.cltv_prediction.toFixed(2)}</p>
+                    <img src="data:image/png;base64,${results.cltv_explanation}" />
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
