@@ -218,3 +218,102 @@
 2025-12-10 08:28:52,327 - src.deploy_api - INFO - Base directory exists: True
 2025-12-10 08:28:52,328 - src.deploy_api - INFO - Contents of models: [WindowsPath('models/churn_model.pkl'), WindowsPath('models/churn_model_notebook.pkl'), WindowsPath('models/cltv_model.pkl'), WindowsPath('models/cltv_model_notebook.pkl'), WindowsPath('models/encoder.joblib'), WindowsPath('models/engineered_features.csv'), WindowsPath('models/labels.csv'), WindowsPath('models/scaler.joblib')]
 2025-12-10 08:28:52,328 - src.deploy_api - INFO - Attempting to load: models\churn_model.pkl
+2025-12-10 14:24:00,434 - __main__ - INFO - MODEL_DIR set to: models
+2025-12-10 14:24:00,451 - __main__ - INFO - Running deploy_api directly
+2025-12-10 14:24:49,618 - __main__ - INFO - MODEL_DIR set to: models
+2025-12-10 14:24:49,671 - __main__ - INFO - Running deploy_api directly
+2025-12-10 14:28:09,601 - __main__ - INFO - MODEL_DIR set to: models
+2025-12-10 14:28:09,629 - __main__ - INFO - Running deploy_api directly
+2025-12-10 22:17:56,506 - __main__ - INFO - MODEL_DIR set to: models
+2025-12-10 22:17:56,524 - __main__ - INFO - Running deploy_api directly
+2025-12-10 22:19:00,597 - __main__ - INFO - MODEL_DIR set to: models
+2025-12-10 22:19:00,603 - __main__ - INFO - Running deploy_api directly
+2025-12-10 22:21:40,975 - src.deploy_api - INFO - MODEL_DIR set to: models
+2025-12-10 22:21:41,011 - src.deploy_api - INFO - Application startup - loading models...
+2025-12-10 22:21:41,012 - src.deploy_api - INFO - ============================================================
+2025-12-10 22:21:41,012 - src.deploy_api - INFO - Starting model loading...
+2025-12-10 22:21:41,012 - src.deploy_api - INFO - ============================================================
+2025-12-10 22:21:41,013 - src.deploy_api - INFO - Model base directory: models
+2025-12-10 22:21:41,013 - src.deploy_api - INFO - Base directory exists: True
+2025-12-10 22:21:41,028 - src.deploy_api - INFO - Contents of models: [WindowsPath('models/churn_model.pkl'), WindowsPath('models/churn_model_notebook.pkl'), WindowsPath('models/cltv_model.pkl'), WindowsPath('models/cltv_model_notebook.pkl'), WindowsPath('models/encoder.joblib'), WindowsPath('models/engineered_features.csv'), WindowsPath('models/labels.csv'), WindowsPath('models/scaler.joblib')]
+2025-12-10 22:21:41,029 - src.deploy_api - INFO - Attempting to load: models\churn_model.pkl
+2025-12-10 22:22:13,011 - src.deploy_api - INFO - Successfully loaded: models\churn_model.pkl
+2025-12-10 22:22:13,012 - src.deploy_api - INFO - Attempting to load: models\cltv_model.pkl
+2025-12-10 22:22:13,252 - src.deploy_api - INFO - Successfully loaded: models\cltv_model.pkl
+2025-12-10 22:22:13,253 - src.deploy_api - INFO - Attempting to load: models\scaler.joblib
+2025-12-10 22:22:13,275 - src.deploy_api - INFO - Successfully loaded: models\scaler.joblib
+2025-12-10 22:22:13,275 - src.deploy_api - INFO - Attempting to load: models\encoder.joblib
+2025-12-10 22:22:13,276 - src.deploy_api - INFO - Successfully loaded: models\encoder.joblib
+2025-12-10 22:22:13,278 - src.deploy_api - INFO - ============================================================
+2025-12-10 22:22:13,278 - src.deploy_api - INFO - Models loaded - Churn: True, CLTV: True
+2025-12-10 22:22:13,278 - src.deploy_api - INFO - Scaler: True, Encoder: True
+2025-12-10 22:22:13,279 - src.deploy_api - INFO - ============================================================
+2025-12-10 22:53:49,281 - src.deploy_api - INFO - MODEL_DIR set to: models
+2025-12-10 22:53:49,316 - src.deploy_api - INFO - Application startup - loading models...
+2025-12-10 22:53:49,316 - src.deploy_api - INFO - ============================================================
+2025-12-10 22:53:49,316 - src.deploy_api - INFO - Starting model loading...
+2025-12-10 22:53:49,316 - src.deploy_api - INFO - ============================================================
+2025-12-10 22:53:49,317 - src.deploy_api - INFO - Model base directory: models
+2025-12-10 22:53:49,318 - src.deploy_api - INFO - Base directory exists: True
+2025-12-10 22:53:49,319 - src.deploy_api - INFO - Contents of models: [WindowsPath('models/churn_model.pkl'), WindowsPath('models/churn_model_notebook.pkl'), WindowsPath('models/cltv_model.pkl'), WindowsPath('models/cltv_model_notebook.pkl'), WindowsPath('models/encoder.joblib'), WindowsPath('models/engineered_features.csv'), WindowsPath('models/labels.csv'), WindowsPath('models/scaler.joblib')]
+2025-12-10 22:53:49,320 - src.deploy_api - INFO - Attempting to load: models\churn_model.pkl
+2025-12-10 22:53:58,478 - src.deploy_api - INFO - Successfully loaded: models\churn_model.pkl
+2025-12-10 22:53:58,479 - src.deploy_api - INFO - Attempting to load: models\cltv_model.pkl
+2025-12-10 22:53:58,677 - src.deploy_api - INFO - Successfully loaded: models\cltv_model.pkl
+2025-12-10 22:53:58,678 - src.deploy_api - INFO - Attempting to load: models\scaler.joblib
+2025-12-10 22:53:58,719 - src.deploy_api - INFO - Successfully loaded: models\scaler.joblib
+2025-12-10 22:53:58,720 - src.deploy_api - INFO - Attempting to load: models\encoder.joblib
+2025-12-10 22:53:58,721 - src.deploy_api - INFO - Successfully loaded: models\encoder.joblib
+2025-12-10 22:53:58,721 - src.deploy_api - INFO - ============================================================
+2025-12-10 22:53:58,722 - src.deploy_api - INFO - Models loaded - Churn: True, CLTV: True
+2025-12-10 22:53:58,722 - src.deploy_api - INFO - Scaler: True, Encoder: True
+2025-12-10 22:53:58,722 - src.deploy_api - INFO - ============================================================
+2025-12-10 22:54:07,671 - src.deploy_api - INFO - Application shutdown
+2025-12-10 22:54:24,141 - src.deploy_api - INFO - MODEL_DIR set to: models
+2025-12-10 22:54:24,155 - src.deploy_api - INFO - Application startup - loading models...
+2025-12-10 22:54:24,156 - src.deploy_api - INFO - ============================================================
+2025-12-10 22:54:24,157 - src.deploy_api - INFO - Starting model loading...
+2025-12-10 22:54:24,170 - src.deploy_api - INFO - ============================================================
+2025-12-10 22:54:24,171 - src.deploy_api - INFO - Model base directory: models
+2025-12-10 22:54:24,172 - src.deploy_api - INFO - Base directory exists: True
+2025-12-10 22:54:24,172 - src.deploy_api - INFO - Contents of models: [WindowsPath('models/churn_model.pkl'), WindowsPath('models/churn_model_notebook.pkl'), WindowsPath('models/cltv_model.pkl'), WindowsPath('models/cltv_model_notebook.pkl'), WindowsPath('models/encoder.joblib'), WindowsPath('models/engineered_features.csv'), WindowsPath('models/labels.csv'), WindowsPath('models/scaler.joblib')]
+2025-12-10 22:54:24,174 - src.deploy_api - INFO - Attempting to load: models\churn_model.pkl
+2025-12-10 22:54:42,257 - src.deploy_api - INFO - Successfully loaded: models\churn_model.pkl
+2025-12-10 22:54:42,258 - src.deploy_api - INFO - Attempting to load: models\cltv_model.pkl
+2025-12-10 22:54:42,450 - src.deploy_api - INFO - Successfully loaded: models\cltv_model.pkl
+2025-12-10 22:54:42,451 - src.deploy_api - INFO - Attempting to load: models\scaler.joblib
+2025-12-10 22:54:42,462 - src.deploy_api - INFO - Successfully loaded: models\scaler.joblib
+2025-12-10 22:54:42,463 - src.deploy_api - INFO - Attempting to load: models\encoder.joblib
+2025-12-10 22:54:42,464 - src.deploy_api - INFO - Successfully loaded: models\encoder.joblib
+2025-12-10 22:54:42,464 - src.deploy_api - INFO - ============================================================
+2025-12-10 22:54:42,465 - src.deploy_api - INFO - Models loaded - Churn: True, CLTV: True
+2025-12-10 22:54:42,465 - src.deploy_api - INFO - Scaler: True, Encoder: True
+2025-12-10 22:54:42,466 - src.deploy_api - INFO - ============================================================
+2025-12-10 22:54:59,206 - src.deploy_api - INFO - Application shutdown
+2025-12-10 22:55:09,956 - src.deploy_api - INFO - MODEL_DIR set to: models
+2025-12-10 22:55:09,965 - src.deploy_api - INFO - Application startup - loading models...
+2025-12-10 22:55:09,966 - src.deploy_api - INFO - ============================================================
+2025-12-10 22:55:09,966 - src.deploy_api - INFO - Starting model loading...
+2025-12-10 22:55:09,968 - src.deploy_api - INFO - ============================================================
+2025-12-10 22:55:09,970 - src.deploy_api - INFO - Model base directory: models
+2025-12-10 22:55:09,971 - src.deploy_api - INFO - Base directory exists: True
+2025-12-10 22:55:09,972 - src.deploy_api - INFO - Contents of models: [WindowsPath('models/churn_model.pkl'), WindowsPath('models/churn_model_notebook.pkl'), WindowsPath('models/cltv_model.pkl'), WindowsPath('models/cltv_model_notebook.pkl'), WindowsPath('models/encoder.joblib'), WindowsPath('models/engineered_features.csv'), WindowsPath('models/labels.csv'), WindowsPath('models/scaler.joblib')]
+2025-12-10 22:55:09,974 - src.deploy_api - INFO - Attempting to load: models\churn_model.pkl
+2025-12-10 23:13:36,896 - src.deploy_api - INFO - MODEL_DIR set to: models
+2025-12-10 23:13:36,931 - src.deploy_api - INFO - Application startup - loading models...
+2025-12-10 23:13:36,931 - src.deploy_api - INFO - ============================================================
+2025-12-10 23:13:36,931 - src.deploy_api - INFO - Starting model loading...
+2025-12-10 23:13:36,932 - src.deploy_api - INFO - ============================================================
+2025-12-10 23:13:36,932 - src.deploy_api - INFO - Model base directory: models
+2025-12-10 23:13:36,933 - src.deploy_api - INFO - Base directory exists: True
+2025-12-10 23:13:36,935 - src.deploy_api - INFO - Contents of models: [WindowsPath('models/churn_model.pkl'), WindowsPath('models/churn_model_notebook.pkl'), WindowsPath('models/cltv_model.pkl'), WindowsPath('models/cltv_model_notebook.pkl'), WindowsPath('models/encoder.joblib'), WindowsPath('models/engineered_features.csv'), WindowsPath('models/labels.csv'), WindowsPath('models/scaler.joblib')]
+2025-12-10 23:13:36,939 - src.deploy_api - INFO - Attempting to load: models\churn_model.pkl
+2025-12-10 23:15:36,416 - src.deploy_api - INFO - MODEL_DIR set to: models
+2025-12-10 23:15:36,451 - src.deploy_api - INFO - Application startup - loading models...
+2025-12-10 23:15:36,451 - src.deploy_api - INFO - ============================================================
+2025-12-10 23:15:36,451 - src.deploy_api - INFO - Starting model loading...
+2025-12-10 23:15:36,451 - src.deploy_api - INFO - ============================================================
+2025-12-10 23:15:36,452 - src.deploy_api - INFO - Model base directory: models
+2025-12-10 23:15:36,452 - src.deploy_api - INFO - Base directory exists: True
+2025-12-10 23:15:36,453 - src.deploy_api - INFO - Contents of models: [WindowsPath('models/churn_model.pkl'), WindowsPath('models/churn_model_notebook.pkl'), WindowsPath('models/cltv_model.pkl'), WindowsPath('models/cltv_model_notebook.pkl'), WindowsPath('models/encoder.joblib'), WindowsPath('models/engineered_features.csv'), WindowsPath('models/labels.csv'), WindowsPath('models/scaler.joblib')]
+2025-12-10 23:15:36,453 - src.deploy_api - INFO - Attempting to load: models\churn_model.pkl

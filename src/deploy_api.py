@@ -17,8 +17,8 @@ Run:
 """
 import logging
 import sys
-from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any
@@ -28,6 +28,7 @@ import pandas as pd
 import numpy as np
 import os
 import traceback
+import uvicorn
 
 # Configure logging
 logging.basicConfig(
@@ -129,7 +130,6 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-app.mount("/", StaticFiles(directory="templates", html=True), name="static")
 
 @app.get("/health")
 def health():
@@ -145,6 +145,7 @@ def health():
         },
         "model_dir": MODEL_DIR
     }
+app.mount("/", StaticFiles(directory="templates", html=True), name="static")
 
 def build_feature_vector(req: PredictRequest) -> pd.DataFrame:
     """Build a single-row DataFrame with the same feature order used in training."""
@@ -240,6 +241,6 @@ def predict(req: PredictRequest):
 
 if __name__ == "__main__":
     logger.info("Running deploy_api directly")
-    import uvicorn
+    # import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=5000, reload=True)
 

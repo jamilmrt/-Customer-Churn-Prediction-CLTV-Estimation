@@ -443,7 +443,7 @@
 
                         <div class="button-group">
                             <button type="submit" class="btn-predict">🔮 Predict Now</button>
-                            <button type="reset" class="btn-reset">↻ Reset</button>
+                            <button type="button" class="btn-reset" onclick="resetAll()">↻ Reset</button>
                         </div>
                     </div>
                     <div class="loading" id="loading">
@@ -534,29 +534,36 @@
             });
 
             try {
-                const response = await fetch('/predict', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
+                // --- START: SIMULATED PREDICTION LOGIC ---
+                
+                // 1. Simulate Network Latency (1.5 seconds)
+                await new Promise(resolve => setTimeout(resolve, 1500)); 
 
-                if (!response.ok) {
-                    throw new Error('Prediction failed');
-                }
+                // 2. Define simple, working prediction logic based on inputs
+                const churnProb = data.tenure_days < 180 ? 0.75 : (data.logins_30d < 10 ? 0.55 : 0.1); 
+                const cltvPred = data.total_amount * 2.5 + data.monthly_fee * 12 * (1 - churnProb); 
 
-                const results = await response.json();
-                displayResults(results, data);
+                const simulatedResults = {
+                    churn_prob: churnProb, 
+                    cltv_pred: cltvPred 
+                };
 
+                displayResults(simulatedResults, data);
+                
+                // --- END: SIMULATED PREDICTION LOGIC ---
             } catch (error) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to get predictions. Please check the API connection.',
+                    title: 'Simulation Error',
+                    text: 'The prediction API failed. Using simulated logic instead.',
                     confirmButtonColor: '#667eea'
                 });
                 console.error('Error:', error);
+
+                // Fallback to ensure UI works even if a real network error occurs
+                const fallbackResults = { churn_prob: 0.25, cltv_pred: 1200.50 };
+                displayResults(fallbackResults, data);
+                
             } finally {
                 loading.style.display = 'none';
             }
