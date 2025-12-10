@@ -1,8 +1,24 @@
-version: '3.8'
+# version: '3.8'
+# services:
+#   api:
+#     build: .
+#     ports:
+#       - "8000:8000"
+#     volumes:
+#       - ./models:/app/models
+version: '3'
 services:
-  api:
-    build: .
+  frontend:
+    build: ./frontend
     ports:
-      - "8000:8000"
-    volumes:
-      - ./models:/app/models
+      - 8080:80
+    networks:
+      - myapp-network
+  backend:
+    build: ./backend
+    ports:
+      - 8081:80
+    networks:
+      - myapp-network
+networks:
+  myapp-network:

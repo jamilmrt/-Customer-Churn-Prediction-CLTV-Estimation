@@ -301,6 +301,105 @@ API: http://localhost:8000
 ```bash
 docker-compose down
 ```
+#### . Running with Docker (Advanced)
+1. Build Docker Image
+From the project root directory, run the following command to build the Docker image:
+
+```bash
+docker build -t myapp-backend -f deployment/Dockerfile .
+docker build -t myapp-frontend -f frontend/Dockerfile .
+```
+#### .. Run Docker Containers
+To run the backend and frontend containers, use the following commands:
+```
+bash
+docker run -d -p 8000:8000 --name myapp-backend myapp-backend
+docker run -d -p 8080:80 --name myapp-frontend myapp-frontend
+```
+3. Access the Application
+```Frontend: http://localhost:8080
+API: http://localhost:8000
+```
+
+# 4. Stop Containers
+To stop the containers, use the following commands:
+```
+bash
+docker stop myapp-backend
+docker stop myapp-frontend
+```
+
+# Running the Frontend
+
+Prerequisites for Frontend
+The frontend is a modern web application that communicates with the FastAPI backend. No additional installations are required beyond the Python dependencies.
+
+# Running Frontend with Backend
+Option 1: Using Python's Built-in HTTP Server (Recommended for Development)
+Step 1: Start the FastAPI backend in one terminal:
+
+```bash
+python src/deploy_api.py
+```
+
+Step 2: In another terminal, start a simple HTTP server to serve the frontend:
+
+```bash
+# From the project root directory
+cd templates
+python -m http.server 8080 
+```
+
+Step 3: Open your browser and navigate to:
+
+```http://localhost:8080```
+Option 2: Using FastAPI StaticFiles (Advanced)
+Modify deploy_api.py to serve static files:
+
+```python
+from fastapi.staticfiles import StaticFiles
+```
+# Add this after creating the FastAPI app
+```app.mount("/", StaticFiles(directory="templates", html=True), name="static")```
+ - Then run:
+```
+bash
+python src/deploy_api.py
+```
+
+# Development Tips
+Enable Auto-Reload for API Development
+
+```bash
+python -m uvicorn src.deploy_api:app --host 0.0.0.0 --port 8000 --reload
+```
+## Debug Mode
+ Set environment variable:
+```
+bash
+# macOS/Linux
+export DEBUG=True
+
+# Windows
+set DEBUG=True
+```
+### View API Logs
+
+```bash
+# Real-time logs
+tail -f deploy_api.log
+
+# Windows PowerShell
+Get-Content -Path deploy_api.log -Wait
+```
+### Add Custom Environment Variables
+To add custom environment variables, create a .env file in the root directory of your project and add the following lines:
+
+```
+# Example custom environment variables
+MY_ENV_VAR=my_value
+ANOTHER_ENV_VAR=another_value
+```
 
 #### 4. View Logs
 ```bash
