@@ -77,11 +77,88 @@ def predict():
 
 
     return jsonify({
-        'churn_prediction': churn_prob,
-        'cltv_prediction': cltv_pred,
-        'churn_explanation': churn_explanation,
-        'cltv_explanation': cltv_explanation
+        'churn_prob': churn_prob,
+        'cltv_pred': cltv_pred,
+        # 'churn_explanation': churn_explanation,
+        # 'cltv_explanation': cltv_explanation
     })
+
+@app.route('/explain', methods=['POST'])
+def explain():
+    gemini_api_key = os.environ.get("GEMINI_API_KEY")
+    if not gemini_api_key:
+        return jsonify({"error": "The GEMINI_API_KEY environment variable is not set."}), 500
+    
+    try:
+        genai.configure(api_key=gemini_api_key)
+    except Exception as e:
+        return jsonify({"error": f"Failed to configure Gemini API: {e}"}), 500
+
+    data = request.get_json()
+    inputs = data.get('inputs', {})
+    predictions = data.get('predictions', {})
+    churn_prob = predictions.get('churn_prob', 0)
+    
+    prompt = f"""
+    You are an expert business analyst explaining a customer churn prediction to a manager.
+    The output must be in three parts, separated by '---'.
+
+    **Customer Data:**
+    - Tenure: {inputs.get('tenure_days')} days
+    - Monthly Fee: ${inputs.get('monthly_fee')}
+    - Logins (30 days): {inputs.get('logins_30d')}
+    - Support Tickets: {inputs.get('tickets')}
+    - Plan Type: {inputs.get('plan')}
+    - Recency (days since last transaction): {inputs.get('recency_days')}
+
+    **Prediction Results:**
+    - Churn Probability: {churn_prob:.2%}
+    - Predicted Customer Lifetime Value (CLTV): ${predictions.get('cltv_pred', 0):.2f}
+    ---
+    **Part 1: Summary**
+    Provide a one-paragraph summary explaining what this churn probability means for this specific customer and the potential business impact.
+    ---
+    **Part 2: Actionable Recommendations**
+    Provide a list of 3-4 specific, actionable recommendations for the business to retain this customer. Use bullet points.
+    ---
+    **Part 3: Key Drivers**
+    Identify the top 3 key drivers for this prediction from the provided customer data. Format this strictly as a JSON object string like this: {{\"labels\": [\"Driver 1\", \"Driver 2\", \"Driver 3\"], \"data\": [85, 60, 45]}}. 'data' is an impact score from 0-100. Do not write anything before or after this single-line JSON string.
+    """
+
+    try:
+        model = genai.GenerativeModel('gemini-pro')
+        response = model.generate_content(prompt)
+        
+        # Handle potential safety blocks
+        if not response.parts:
+            return jsonify({"error": "The response from the AI was blocked for safety reasons."}), 500
+
+        # The prompt asks for '---' as a separator.
+        # It's safer to expect the model might not follow instructions perfectly.
+        # We look for the JSON part specifically.
+        import re
+        json_match = re.search(r'\{.*\}', response.text)
+        if not json_match:
+            raise ValueError("Could not find the JSON part for the chart in the AI response.")
+        
+        visual_data_str = json_match.group(0)
+        visual_data = json.loads(visual_data_str)
+        
+        # The text part is everything else.
+        text_part = response.text.replace(visual_data_str, "").replace('---', '<hr>').strip()
+        
+        # Basic formatting for HTML display
+        text_part = text_part.replace('**', '<strong>').replace('</strong>', '</strong><br>')
+        text_part = text_part.replace('* ', '<br>&bull; ')
+        
+        return jsonify({
+            "text": text_part,
+            "visual": visual_data
+        })
+
+    except Exception as e:
+        print(f"Gemini API or parsing error: {e}")
+        return jsonify({"error": "Failed to process the explanation from the AI. Please check the server logs."}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

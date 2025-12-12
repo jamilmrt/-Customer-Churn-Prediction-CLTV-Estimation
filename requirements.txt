@@ -7,3 +7,4 @@ uvicorn[standard]
 shap
 matplotlib
 Flask
+google-generativeai
