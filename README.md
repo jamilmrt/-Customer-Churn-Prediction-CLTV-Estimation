@@ -1,4 +1,4 @@
-# Customer Churn Prediction and CLTV Estimation with Explainable AI
+# Customer Churn Prediction and CLTV Estimation 
 
 This repository contains the source code for a final year project focused on predicting customer churn and estimating Customer Lifetime Value (CLTV). The project implements a machine learning pipeline to process data, train predictive models, and serve the results via an API with an interactive web-based frontend.
 
